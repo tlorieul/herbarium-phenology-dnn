@@ -7,7 +7,7 @@ This has been tested using:
 * Python 2.7
 * Pytorch 0.4.0
 * CUDA 9.1
-* cuDNN 7.0
+* cuDNN 7.1
 
 Other dependencies are:
 

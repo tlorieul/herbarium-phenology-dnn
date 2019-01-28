@@ -29,14 +29,20 @@ class HerbariumPhenophaseDataset(data.Dataset):
     def __init__(self, root, train, subset,
                  transform=None, target_transform=None):
 
-        annotations_path = join(root, 'herbarium_asteraceae_phenophase', 'annotations')
+        root = join(root, 'herbarium_asteraceae_phenophase')
+        annotations_path = join(root, 'annotations')
 
         filename = join(annotations_path, 'annotations.csv')
         df = pd.read_csv(filename, index_col='id')
 
         filename = join(annotations_path, 'image_filenames.csv')
         df_filenames = pd.read_csv(filename, index_col='id')
-        df = df.merge(df_filenames, how='right', on='id', validate='one_to_one')
+        df = df.merge(df_filenames, how='right', on='id',
+                      validate='one_to_one')
+
+        # Remove rows with missing values,
+        # i.e. images that could not be fetched via their URL
+        df.dropna(inplace=True)
 
         classes, targets = np.unique(df['phenophase'], return_inverse=True)
 
@@ -49,7 +55,7 @@ class HerbariumPhenophaseDataset(data.Dataset):
         df = df[set_ind]
         targets = targets[set_ind]
 
-        self.image_files = root + '/images/' + df['image_filename']
+        self.image_files = join(root, 'images') + '/' + df['image_filename']
         self.image_files = self.image_files.values
 
         self.root = root
