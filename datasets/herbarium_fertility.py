@@ -36,15 +36,20 @@ get_train_val_split_indices = get_iid_train_val_split
 class HerbariumDataset(data.Dataset):
     def __init__(self, root, task, train, subset,
                  transform=None, target_transform=None):
-
+        # Define paths
         root = join(root, 'herbarium_fertility')
         annotations_path = join(root, 'annotations')
+        annotations_filename = join(annotations_path, 'metadata.csv')
+        images_filename = join(annotations_path, 'image_filenames.csv')
 
-        filename = join(annotations_path, 'metadata.csv')
-        df = pd.read_csv(filename, index_col='id')
+        # Check if paths exist
+        for path in [root, annotations_path, annotations_filename, images_filename]:
+            if not os.path.exists(path):
+                raise ValueError('could not found path: {}'.format(path))
 
-        filename = join(annotations_path, 'image_filenames.csv')
-        df_filenames = pd.read_csv(filename, index_col='id')
+        # Load CSV files
+        df = pd.read_csv(annotations_filename, index_col='id')
+        df_filenames = pd.read_csv(images_filename, index_col='id')
         df = df.merge(df_filenames, how='right', on='id',
                       validate='one_to_one')
 
