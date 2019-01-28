@@ -18,8 +18,22 @@ Other dependencies are:
 For the download and formating of the dataset, the following additional dependencies might be required:
 
 * Joblib for parallelization
-* PIL for image integrity check
-* ImageMagick for image preprocessing
+* Pillow for image integrity check
+* ImageMagick command line tool for image preprocessing
+
+To more easily install the Python dependencies, a few files are provided:
+
+* a `requirements.txt` file for `pip`:
+
+```
+pip install -r requirements.txt
+```
+
+* an `environment.yml` file for `conda`:
+
+```
+conda env create -f environment.yml
+```
 
 # Usage
 
