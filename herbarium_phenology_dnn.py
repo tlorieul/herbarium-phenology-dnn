@@ -12,15 +12,18 @@ if __name__ == '__main__':
 
     parser.add_argument(
         '--dataset_root', type=str, required=True, default=argparse.SUPPRESS,
-        help='path to dataset'
+        help='path to datasets'
     )
     parser.add_argument(
-        '--task', type=str, choices=["fertility", "flower/fruit"],
+        '--task', type=str, required=True, default=argparse.SUPPRESS,
+        choices=['fertility', 'flower/fruit', 'phenophase'],
         help='which task to use for biggest dataset'
     )
     parser.add_argument(
         '--subset', type=str,
-        choices=["train", "test", "random_test", "species_test", "herbarium_test"],
+        choices=[
+            'train', 'test', 'random_test', 'species_test', 'herbarium_test'
+        ],
         required=True, default=argparse.SUPPRESS,
         help='which subset to use'
     )
@@ -34,7 +37,7 @@ if __name__ == '__main__':
     )
     parser.add_argument(
         '--downsample_image', action='store_true',
-        help='image preprocessing that preserves downsamples the image by a '
+        help='image preprocessing that downsamples the image by a '
              'factor of 2'
     )
     parser.add_argument(
@@ -42,11 +45,14 @@ if __name__ == '__main__':
         help='number of jobs for data loading'
     )
 
-    subparsers = parser.add_subparsers(help='action: train or predict')
+    subparsers = parser.add_subparsers(
+        help='action: train or predict',
+    )
 
     # Subparser for training
     parser_train = subparsers.add_parser(
-        'train', help='perform training'
+        'train', help='perform training',
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
     parser_train.add_argument('experiment_output_path')
     parser_train.add_argument(
@@ -69,7 +75,8 @@ if __name__ == '__main__':
 
     # Subparser for prediction
     parser_predict = subparsers.add_parser(
-        'predict', help='predict on val/test'
+        'predict', help='predict on val/test',
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
     parser_predict.add_argument('model_file')
     parser_predict.add_argument('output_predictions_file')

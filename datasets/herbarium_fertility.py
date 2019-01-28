@@ -6,11 +6,7 @@ import pandas as pd
 from torch.utils import data
 from torchvision.datasets.folder import default_loader
 
-
-import sys
-sys.path.append('../dirichlet_loss')
-
-from toolkit.common.torch.utils import get_random_train_val_split_indices
+from common import get_random_train_val_split_indices
 
 
 def get_transform(data_augmentation=False):
@@ -41,17 +37,23 @@ class HerbariumDataset(data.Dataset):
     def __init__(self, root, task, train, subset,
                  transform=None, target_transform=None):
 
-        filename = join(root, 'metadata.csv')
+        annotations_path = join(root, 'herbarium_fertility', 'annotations')
+
+        filename = join(annotations_path, 'metadata.csv')
         df = pd.read_csv(filename, index_col='id')
 
+        filename = join(annotations_path, 'image_filenames.csv')
+        df_filenames = pd.read_csv(filename, index_col='id')
+        df = df.merge(df_filenames, how='right', on='id', validate='one_to_one')
+
         if task == 'fertility':
-            filename = join(root, 'fertility_task.csv')
+            filename = join(annotations_path, 'fertility_task.csv')
             df_task = pd.read_csv(filename, index_col='id')
             df = df.merge(df_task, how='right', on='id', validate='one_to_one')
             targets = df['is_fertile'].values.astype(np.float32).reshape(-1, 1)
             n_classes = 1
         elif task == 'flower/fruit':
-            filename = join(root, 'flower_fruit_task.csv')
+            filename = join(annotations_path, 'flower_fruit_task.csv')
             df_task = pd.read_csv(filename, index_col='id')
             df = df.merge(df_task, how='right', on='id', validate='one_to_one')
             targets = df[['has_flower', 'has_fruit']].values.astype(np.float32)

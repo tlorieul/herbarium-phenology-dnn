@@ -6,11 +6,7 @@ import pandas as pd
 from torch.utils import data
 from torchvision.datasets.folder import default_loader
 
-
-import sys
-sys.path.append('../dirichlet_loss')
-
-from toolkit.common.torch.utils import get_random_train_val_split_indices
+from common import get_random_train_val_split_indices
 
 
 def get_transform(data_augmentation=False):
@@ -26,14 +22,6 @@ def get_iid_train_val_split(train_dataset):
         train_dataset, test_size=.1, shuffle=True, random_seed=0)
 
 
-def get_species_train_val_split():
-    raise NotImplementedError()
-
-
-def get_herbarium_train_val_split():
-    raise NotImplementedError()
-
-
 get_train_val_split_indices = get_iid_train_val_split
 
 
@@ -41,8 +29,14 @@ class HerbariumPhenophaseDataset(data.Dataset):
     def __init__(self, root, train, subset,
                  transform=None, target_transform=None):
 
-        filename = join(root, 'annotations.csv')
+        annotations_path = join(root, 'herbarium_asteraceae_phenophase', 'annotations')
+
+        filename = join(annotations_path, 'annotations.csv')
         df = pd.read_csv(filename, index_col='id')
+
+        filename = join(annotations_path, 'image_filenames.csv')
+        df_filenames = pd.read_csv(filename, index_col='id')
+        df = df.merge(df_filenames, how='right', on='id', validate='one_to_one')
 
         classes, targets = np.unique(df['phenophase'], return_inverse=True)
 

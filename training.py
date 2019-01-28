@@ -80,7 +80,7 @@ def train_command(args):
 
     # Load pretrained model
     print('\n# Loading model')
-    model = getattr(models, args.model)(pretrained=not args.train_from_scratch)
+    model = getattr(models, args.model)(pretrained=True)
     if args.model == 'inception_v3':
         raise ValueError(
             'InceptionV3 not supported due to too many differences with other '
@@ -95,7 +95,7 @@ def train_command(args):
 
     n_classes = train_data_loader.dataset.n_classes
 
-    n_outputs = n_classes if args.loss is None else 1
+    n_outputs = n_classes
     model.fc = nn.Linear(model.fc.in_features, n_outputs)
     clf = model.fc
     nn.init.kaiming_normal_(clf.weight)
