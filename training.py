@@ -2,6 +2,7 @@ import os
 import sys
 from os.path import join
 
+import numpy as np
 import torch
 from torch import nn, optim
 from torchvision import models
@@ -117,10 +118,23 @@ def train_command(args):
                           momentum=.9, nesterov=True)
     print(optimizer)
 
+    if args.lr_decay:
+        from torch.optim.lr_scheduler import MultiStepLR
+        milestones = np.asarray(eval(args.lr_decay))
+        if issubclass(milestones.dtype.type, np.floating):
+            milestones = (args.num_epochs * milestones).astype(np.int)
+        lr_scheduler = MultiStepLR(optimizer, milestones=milestones, gamma=0.1)
+        print '{}(milestones={}, gamma={})'.format(
+            lr_scheduler.__class__.__name__, lr_scheduler.milestones,
+            lr_scheduler.gamma
+        )
+    else:
+        lr_scheduler = None
+
     history = train(
         model, optimizer, criterion, train_data_loader,
-        n_epochs=args.num_epochs, metrics=[metric],
-        val_data_loader=test_data_loader, gpu=True
+        n_epochs=args.num_epochs, lr_scheduler=lr_scheduler,
+        metrics=[metric], val_data_loader=test_data_loader, gpu=True
     )
 
     with open(join(args.experiment_output_path, 'config.txt'), 'w') as f:

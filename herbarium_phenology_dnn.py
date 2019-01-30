@@ -68,6 +68,11 @@ if __name__ == '__main__':
         help='learning rate'
     )
     parser_train.add_argument(
+        '--lr_decay', type=str, default=None,
+        help='use multistep lr decay, pass a string containing the milestones,'
+             ' e.g. "[1./3, 2./3]"'
+    )
+    parser_train.add_argument(
         '--data_augmentation', action='store_true',
         help='data augmentation to use during training'
     )

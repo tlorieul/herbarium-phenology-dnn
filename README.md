@@ -78,6 +78,7 @@ For help about how to perform training:
 python herbarium_phenology_dnn.py train -h
 usage: herbarium_phenology_dnn.py train [-h] [--model MODEL] --num_epochs
                                         NUM_EPOCHS --lr LR
+                                        [--lr_decay LR_DECAY]
                                         [--data_augmentation]
                                         experiment_output_path
 
@@ -90,6 +91,8 @@ optional arguments:
   --num_epochs NUM_EPOCHS
                         max number of epochs for training
   --lr LR               learning rate
+  --lr_decay LR_DECAY   use multistep lr decay, pass a string containing the
+                        milestones, e.g. "[1./3, 2./3]" (default: None)
   --data_augmentation   data augmentation to use during training (default:
                         False)
 ```
@@ -173,25 +176,25 @@ optional arguments:
 For EXP1-Fertility ResNet50-Large:
 
 ```
-python herbarium_phenology_dnn.py --dataset_root <path_to_dataset> --task fertility --subset train --batch_size 48 --keep_image_ratio --downsample_image train --model resnet50 --num_epochs 45 --lr 0.001 --data_augmentation <output_path>
+python herbarium_phenology_dnn.py --dataset_root <path_to_dataset> --task fertility --subset train --batch_size 48 --keep_image_ratio --downsample_image train --model resnet50 --num_epochs 45 --lr 0.001 --lr_decay "[1./3, 2./3]" --data_augmentation <output_path>
 ```
 
 For EXP1-Fertility ResNet50-VeryLarge:
 
 ```
-python herbarium_phenology_dnn.py --dataset_root <path_to_dataset> --task fertility --subset train --batch_size 12 --keep_image_ratio train --model resnet50 --num_epochs 45 --lr 0.001 --data_augmentation <output_path>
+python herbarium_phenology_dnn.py --dataset_root <path_to_dataset> --task fertility --subset train --batch_size 12 --keep_image_ratio train --model resnet50 --num_epochs 45 --lr 0.001 --lr_decay "[1./3, 2./3]" --data_augmentation <output_path>
 ```
 
 For EXP2-Fl.Fr ResNet50-VeryLarge:
 
 ```
-python herbarium_phenology_dnn.py --dataset_root <path_to_dataset> --task "flower/fruit" --subset train --batch_size 12 --keep_image_ratio train --model resnet50 --num_epochs 45 --lr 0.01 --data_augmentation <output_path>
+python herbarium_phenology_dnn.py --dataset_root <path_to_dataset> --task "flower/fruit" --subset train --batch_size 12 --keep_image_ratio train --model resnet50 --num_epochs 45 --lr 0.01 --lr_decay "[1./3, 2./3]" --data_augmentation <output_path>
 ```
 
 For EXP3-Pheno ResNet50-VeryLarge:
 
 ```
-python herbarium_phenology_dnn.py --dataset_root <path_to_dataset> --task phenophase --subset train --batch_size 8 --keep_image_ratio train --model resnet50 --num_epochs 30 --lr 0.001 --data_augmentation <output_path>
+python herbarium_phenology_dnn.py --dataset_root <path_to_dataset> --task phenophase --subset train --batch_size 8 --keep_image_ratio train --model resnet50 --num_epochs 30 --lr 0.001 --lr_decay "[1./3, 2./3]" --data_augmentation <output_path>
 ```
 
 ## Test phase
